@@ -9,12 +9,11 @@ import { CartItem } from './cart-item';
 export class ShoppingCartItemComponent implements OnInit {
   @Input() cartItem!: CartItem;
   @Output() cartItemDelete = new EventEmitter<void>();
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  onDeleteClicked(): void{
+  onDeleteClicked(): void {
     this.cartItemDelete.emit();
   }
 

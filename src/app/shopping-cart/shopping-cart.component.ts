@@ -1,40 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { CartItem } from './cart-item';
+import { ShoppingCartService } from './shopping-cart.service';
 
 @Component({
   selector: 'app-shopping-cart',
   templateUrl: './shopping-cart.component.html',
-  styleUrls: ['./shopping-cart.component.css']
+  styleUrls: ['./shopping-cart.component.css'],
 })
 export class ShoppingCartComponent implements OnInit {
-  cartItems : CartItem[] = [
-    {
-      imageUrl: 'audifonos.jpg',
-      name: 'Auriculares',
-      price: 50,
-    },
-    {
-      imageUrl: 'teclado.jpg',
-      name: 'Teclado',
-      price: 14.5,
-    },
-    {
-      imageUrl: 'pantalla.jpg',
-      name: 'Pantalla',
-      price: 199.99,
-    },
-  ];
+  get cartItems(): CartItem[]{
+    return this.shoppingcartService.items;
+  }
+  
+
+
   get total():number{
-    return this.cartItems.reduce((acc, {price}) => (acc += price),0)
+    return this.shoppingcartService.total;
   }
 
-  constructor() { }
+  constructor(private shoppingcartService: ShoppingCartService) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  deleteItem(itemToDelete: CartItem):void{
-    this.cartItems = this.cartItems.filter((item) => item !== itemToDelete)
+  deleteItem(itemToDelete: CartItem): void {
+    this.shoppingcartService.deleteItem(itemToDelete);
   }
 
 }
