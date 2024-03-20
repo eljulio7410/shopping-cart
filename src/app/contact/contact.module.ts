@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { ContactRoutingModule } from './contact-routing.module';
 import { ContactComponent } from './contact.component';
-
-
+import { ContactRoutingModule } from './contact-routing.module';
+import { FormsModule } from '@angular/forms';
+import { FormExtensionsModule } from '../form-extensions/form-extensions.modeule';
 
 
 @NgModule({
   declarations: [ContactComponent],
   imports: [
-    CommonModule, ContactRoutingModule
+    CommonModule,
+    ContactRoutingModule,
+    FormsModule,
+    FormExtensionsModule,
   ],
 })
-export class ContactModule { }
+export class ContactModule {}

@@ -1,17 +1,26 @@
-import { Component, OnInit } from '@angular/core';
-import { Product } from '../product';
-import { CatalogService } from '../catalog.service';
-import { ShoppingCartService } from 'src/app/shopping-cart/shopping-cart.service';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { ShoppingCartService } from 'src/app/shopping-cart/shopping-cart.service';
+import { CatalogService } from '../catalog.service';
 import { mapProductToCartItem } from '../helpers/map-product-to-cart-item.helper';
+import { Product } from '../product';
 
 @Component({
-  selector: 'app-products-details',
-  templateUrl: './products-details.component.html',
-  styleUrls: ['./products-details.component.css']
+  selector: 'app-product-details',
+  templateUrl: './product-details.component.html',
+  styleUrls: ['./product-details.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductDetailsComponent implements OnInit {
-  product!: Product | null;
+export class ProductDetailsComponent {
+  id$: Observable<number> = this.route.paramMap.pipe(
+    map((paramMap) => Number(paramMap.get('id')))
+  );
+  product$: Observable<Product | null> = this.id$.pipe(
+    switchMap((id) => this.catalogService.getProduct(id)),
+    tap((product) => product === null && this.router.navigate(['catalog']))
+  );
 
   constructor(
     private catalogService: CatalogService,
@@ -20,25 +29,8 @@ export class ProductDetailsComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {
-    // this.route.paramMap.subscribe( paramMap => {
-    //   const productId = paramMap.get('id');
-    // });
-
-    const productId = this.route.snapshot.paramMap.get('id');
-    this.product = this.catalogService.getProduct(Number(productId));
-
-    if (this.product === null) {
-      this.router.navigate(['catalog']);
-    }
-  }
-
-  addToCart(): void {
-    if (this.product === null) {
-      return;
-    }
-
-    const cartItem = mapProductToCartItem(this.product);
+  addToCart(product: Product): void {
+    const cartItem = mapProductToCartItem(product);
     this.scService.addItem(cartItem);
   }
 }

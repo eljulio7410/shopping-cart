@@ -1,26 +1,28 @@
-import { Injectable } from "@angular/core";
-import { CartItem } from "./cart-item";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CartItem } from './cart-item';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
+export class ShoppingCartService {
+  private items = new BehaviorSubject<CartItem[]>([]);
+  items$ = this.items.asObservable();
 
-export class ShoppingCartService{
-    items : CartItem[] = []; 
+  itemsCount$: Observable<number> = this.items$.pipe(
+    map((items) => items.length)
+  );
 
-    get itemsCount(): number {
-      return this.items.length;
-    }
+  total$: Observable<number> = this.items$.pipe(
+    map((items) => items.reduce((acc, { price }) => (acc += price), 0))
+  );
 
-      get total(): number {
-        return this.items.reduce((acc, { price }) => (acc += price), 0);
-      }
+  addItem(item: CartItem): void {
+    this.items.next([...this.items.value, item]);
+  }
 
-      addItem(item: CartItem): void {
-        this.items = [...this.items, item];
-      }
-
-      deleteItem(itemToDelete: CartItem): void {
-        this.items = this.items.filter((item) => item !== itemToDelete);
-      }
+  deleteItem(itemToDelete: CartItem): void {
+    this.items.next(this.items.value.filter((item) => item !== itemToDelete));
+  }
 }

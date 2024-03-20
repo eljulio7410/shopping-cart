@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { CartItem } from './cart-item';
 import { ShoppingCartService } from './shopping-cart.service';
 
@@ -6,17 +6,11 @@ import { ShoppingCartService } from './shopping-cart.service';
   selector: 'app-shopping-cart',
   templateUrl: './shopping-cart.component.html',
   styleUrls: ['./shopping-cart.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShoppingCartComponent implements OnInit {
-  get cartItems(): CartItem[]{
-    return this.shoppingcartService.items;
-  }
-  
-
-
-  get total():number{
-    return this.shoppingcartService.total;
-  }
+  cartItems$ = this.shoppingcartService.items$;
+  total$ = this.shoppingcartService.total$;
 
   constructor(private shoppingcartService: ShoppingCartService) {}
 
@@ -25,5 +19,4 @@ export class ShoppingCartComponent implements OnInit {
   deleteItem(itemToDelete: CartItem): void {
     this.shoppingcartService.deleteItem(itemToDelete);
   }
-
 }
